@@ -1,0 +1,3 @@
+On alpine-based nginx, in var/log/nginx, will find access.log and error.log which redirect to /dev/stdout and /dev/stderr.
+
+THere is nothing in /usr/share/nginx/html yet.
