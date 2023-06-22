@@ -1,0 +1,66 @@
+version: '3.9'
+
+services:
+    mariadb:
+        image: mariadb
+        container_name: mariadb
+        build: ./srcs/mariadb
+        restart: on-failure
+        env_file:
+            - .env
+        volumes:
+            - MariaDB:/var/lib/mysql
+        networks: 
+            - inception
+        expose:
+            - '3306'
+        
+    wordpress:    
+        image: wordpress
+        container_name: wordpress
+        build: ./srcs/wordpress
+        restart: on-failure
+        env_file:
+            - .env
+        volumes:      
+            - WordPress:/var/www/wordpress
+        networks: 
+            - inception
+        depends_on:
+            - mariadb
+        expose:
+            - '9000'
+
+    nginx:
+        image: nginx
+        container_name: nginx
+        build: ./srcs/nginx
+        restart: on-failure
+        volumes:
+            - WordPress:/var/www/wordpress
+        ports:      
+            - "443:443"
+        networks: 
+            - inception
+        depends_on:
+            - wordpress
+        
+volumes:
+  MariaDB:
+    name: MariaDB
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/lrandria/data/mariadb
+
+  WordPress:
+    name: WordPress
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/lrandria/data/wordpress
+
+networks:
+    inception:
